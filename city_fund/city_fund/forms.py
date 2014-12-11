@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from signup.models import SignUp
+from django.shortcuts import render_to_response
 
 
 class SignUpForm(ModelForm):
@@ -9,12 +10,9 @@ class SignUpForm(ModelForm):
         fields = ['name', 'email', 'message']
 
     def unique_email(self):
-        try:
-            user = SignUp.objects.get(email__iexact=self.cleaned_data['email'])
-        except SignUp.DoesNotExist:
-            return self.cleaned_data['email']
-        raise forms.ValidationError(_(u'This email address is already in use. Please supply a different email address.'))
-
+        email = self.cleaned_data.get('email')
+        if SignUp.objects.filter(email__iexact=email).count() > 0:
+            return False
 
 
 # class SignUp(forms.Form):

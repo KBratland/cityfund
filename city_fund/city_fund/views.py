@@ -13,9 +13,11 @@ def home(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
 
-        if form.is_valid():
+        if form.is_valid() and SignUpForm.unique_email(form) is True:
             form.save()
             return render_to_response('signup_thankyou.html')
+        else:
+            return render_to_response('email_inuse.html')
     else:
         form = SignUpForm()
 
